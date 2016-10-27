@@ -1,0 +1,36 @@
+ERROR	2016-10-27 01:23:41,985	0	org.anc.lapps.nlp4j.NLP4J	[main]	{
+  "discriminator" : "http://vocab.lappsgrid.org/ns/error",
+  "payload" : "Error in configuration parameters."
+}
+ERROR	2016-10-27 01:25:29,931	0	org.anc.lapps.nlp4j.NLP4J	[main]	{
+  "discriminator" : "http://vocab.lappsgrid.org/ns/error",
+  "payload" : "Error in configuration parameters."
+}
+ERROR	2016-10-27 01:26:30,099	0	org.anc.lapps.nlp4j.NLP4J	[main]	{
+  "discriminator" : "http://vocab.lappsgrid.org/ns/error",
+  "payload" : "Error in configuration parameters."
+}
+ERROR	2016-10-27 01:27:12,603	0	org.anc.lapps.nlp4j.NLP4J	[main]	{
+  "discriminator" : "http://vocab.lappsgrid.org/ns/error",
+  "payload" : "Error in configuration parameters."
+}
+ERROR	2016-10-27 01:30:02,179	0	org.anc.lapps.nlp4j.NLP4J	[main]	{
+  "discriminator" : "http://vocab.lappsgrid.org/ns/error",
+  "payload" : "Error in configuration parameters."
+}
+ERROR	2016-10-27 01:30:39,939	0	org.anc.lapps.nlp4j.NLP4J	[main]	{
+  "discriminator" : "http://vocab.lappsgrid.org/ns/error",
+  "payload" : "Error in configuration parameters."
+}
+ERROR	2016-10-27 01:30:44,138	0	org.anc.lapps.nlp4j.NLP4J	[main]	{
+  "discriminator" : "http://vocab.lappsgrid.org/ns/error",
+  "payload" : "Error in configuration parameters."
+}
+ERROR	2016-10-27 01:31:58,918	0	org.anc.lapps.nlp4j.NLP4J	[main]	{
+  "discriminator" : "http://vocab.lappsgrid.org/ns/error",
+  "payload" : "Error in configuration parameters."
+}
+ERROR	2016-10-27 01:33:58,563	0	org.anc.lapps.nlp4j.NLP4J	[main]	{
+  "discriminator" : "http://vocab.lappsgrid.org/ns/error",
+  "payload" : "Error in configuration parameters."
+}
