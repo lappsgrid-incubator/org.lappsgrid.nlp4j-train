@@ -156,7 +156,6 @@ public class NLP4J implements ProcessingService
                 String configPath = makeConfigFile(inputDirPath, data);
                 if(configPath.contains("ERROR"))
                 {
-                    System.err.println(configPath);
                     // TODO: make a different error for each configuration parameter
                     String errorData = generateError("Error in configuration parameters.");
                     logger.error(errorData);
@@ -185,7 +184,6 @@ public class NLP4J implements ProcessingService
                 return errorData;
             }
 
-
             // Create a stream to hold the output from System.out.println. This is necessary
             // because when running, the program will print things from many RankLib classes and
             // methods. So the printed output will be "caught" and saved to output.
@@ -204,40 +202,6 @@ public class NLP4J implements ProcessingService
 
             // Make a Map to hold both the printed, and file outputs.
             Map<String,String> outputPayload = new HashMap<>();
-
-            /*
-            try
-            {
-                // Process all the files in the output folder, to return them
-                // as part of the outputted Data object, and delete them from the
-                // temporary directory
-                File outputFolder = new File(outputDirPath.toString());
-                File[] listOfFiles = outputFolder.listFiles();
-                for (File file : listOfFiles)
-                {
-                    if (file.isFile())
-                    {
-                        // Get the filename, to serve as the key in the Map object, and
-                        // the content of the file to be put in the output
-                        String fileName = file.getName();
-                        String fileContent = readFile(file.getAbsolutePath());
-
-                        outputPayload.put(fileName, fileContent);
-                        file.deleteOnExit();
-                    }
-                }
-            }
-
-
-            // Since we are only handling files created by the function, there should never be
-            // a problem with these files, thus the exception will get promoted to a RuntimeException.
-            catch (IOException e)
-            {
-                String errorData = generateError("Error in handling of temporary files.");
-                logger.error(errorData);
-                throw new RuntimeException("A problem occurred in the handling of the temporary files.", e);
-            }
-            */
 
             // Also add the printed text caught from the out stream to the payload
             // with the "Printed" key
@@ -321,7 +285,7 @@ public class NLP4J implements ProcessingService
         // "Name not implemented for Online component."
         if(data.getParameter("saveModel") != null)
         {
-            params.append(" -m ").append(outputDirPath).append("/").append(data.getParameter("saveModel"));
+            params.append(" -m ").append(outputDirPath).append("/").append(data.getParameter("saveModel")).append(".xz");
         }
 
         if(data.getParameter("cv") != null)
@@ -647,7 +611,7 @@ public class NLP4J implements ProcessingService
                 {
                     lolsSet = true;
                     String givenNumber = (String) inputData.getParameter("lols-fixed");
-                    configTxt.append("        <lols fixed=\"").append(givenNumber);
+                    configTxt.append("        <lols fixed=\"").append(givenNumber).append("\"");
                 }
 
                 if(inputData.getParameter("lols-decaying") != null)
@@ -737,7 +701,7 @@ public class NLP4J implements ProcessingService
                         configTxt.append(" ");
                         if(f == 0)
                         {
-                            configTxt.append("       <");
+                            configTxt.append("       <feature ");
                         }
 
                         source = (String) inputData.getParameter(sourceKey);
@@ -746,8 +710,8 @@ public class NLP4J implements ProcessingService
                             return "INVALID FEATURE SOURCE ERROR";
                         }
 
-                        configTxt = new StringBuilder("feature f");
-                        configTxt.append(f).append("=\"").append(source);
+                        configTxt.append("f").append(f);
+                        configTxt.append("=\"").append(source);
 
                         if(inputData.getParameter(windowKey) != null)
                         {
@@ -782,19 +746,20 @@ public class NLP4J implements ProcessingService
                             configTxt.append(":").append(value);
                         }
 
+                        configTxt.append("\"");
+
                         f++;
 
                     }
 
                     else
                     {
-                        featureFound = false;
-
                         // If f is not 0, then there has been at least one feature on this line, which
                         // means this line wasn't empty
                         if(f != 0)
                         {
                             lineFound = true;
+                            featureFound = true;
                             configTxt.append("/>\r\n");
                             f = 0;
                             i++;
@@ -802,6 +767,7 @@ public class NLP4J implements ProcessingService
 
                         else
                         {
+                            featureFound = false;
                             lineFound = false;
                         }
                     }
@@ -832,9 +798,7 @@ public class NLP4J implements ProcessingService
         // END OF FEATURES
 
 
-        configTxt.append("</configuration");
-
-        System.err.println(configTxt.toString());
+        configTxt.append("</configuration>");
 
         Path filePath = writeTempFile("config", dir, configTxt.toString(), ".xml");
 
