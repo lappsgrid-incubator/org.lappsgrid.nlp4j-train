@@ -12,3 +12,4 @@ buildNumber.properties
 *.ipr
 *.iml
 *.war
+src/main/resources/lexica/en-word-embeddings-undigitalized.xz
