@@ -26,7 +26,7 @@ import java.util.regex.PatternSyntaxException;
  */
 
 
-public class NLP4J implements ProcessingService
+public class NLP4JTrain implements ProcessingService
 {
     /**
      * The Json String required by getMetadata()
@@ -34,7 +34,7 @@ public class NLP4J implements ProcessingService
     private String metadata;
     private Logger logger;
 
-    public NLP4J() { metadata = generateMetadata(); }
+    public NLP4JTrain() { metadata = generateMetadata(); }
 
     private String generateMetadata()
     {
@@ -94,7 +94,7 @@ public class NLP4J implements ProcessingService
     @Override
     public String execute(String input) {
 
-        logger = LoggerFactory.getLogger(NLP4J.class);
+        logger = LoggerFactory.getLogger(NLP4JTrain.class);
 
         // Parse the JSON string into a Data object, and extract its discriminator.
         Data<String> data = Serializer.parse(input, Data.class);
@@ -156,10 +156,132 @@ public class NLP4J implements ProcessingService
                 String configPath = makeConfigFile(inputDirPath, data);
                 if(configPath.contains("ERROR"))
                 {
-                    // TODO: make a different error for each configuration parameter
-                    String errorData = generateError("Error in configuration parameters.");
-                    logger.error(errorData);
-                    return errorData;
+                    if(configPath.contains("INDEX ERROR"))
+                    {
+                        StringBuilder errorMsg = new StringBuilder("The given list of TSV indices and TSV fields did not match.\r\n");
+                        String[] errorParts;
+                        errorParts = configPath.split(";");
+                        errorMsg.append("Given indices: ").append(errorParts[1]);
+                        errorMsg.append("\r\nGiven fields: ").append(errorParts[2]);
+
+                        String errorData = generateError(errorMsg.toString());
+                        logger.error(errorData);
+                        return errorData;
+                    }
+
+                    else if(configPath.contains("AMBIGUITY ERROR"))
+                    {
+                        StringBuilder errorMsg = new StringBuilder("Invalid field given for ambiguity classes.\r\n");
+                        String[] errorParts;
+                        errorParts = configPath.split(";");
+                        errorMsg.append("Given: ").append(errorParts[1]);
+
+                        String errorData = generateError(errorMsg.toString());
+                        logger.error(errorData);
+                        return errorData;
+                    }
+
+                    else if(configPath.contains("CLUSTERS ERROR"))
+                    {
+                        StringBuilder errorMsg = new StringBuilder("Invalid field given for word clusters.\r\n");
+                        String[] errorParts;
+                        errorParts = configPath.split(";");
+                        errorMsg.append("Given: ").append(errorParts[1]);
+
+                        String errorData = generateError(errorMsg.toString());
+                        logger.error(errorData);
+                        return errorData;
+                    }
+
+                    else if(configPath.contains("NAMED ENTITY ERROR"))
+                    {
+                        StringBuilder errorMsg = new StringBuilder("Invalid field given for named entity gazetteers.\r\n");
+                        String[] errorParts;
+                        errorParts = configPath.split(";");
+                        errorMsg.append("Given: ").append(errorParts[1]);
+
+                        String errorData = generateError(errorMsg.toString());
+                        logger.error(errorData);
+                        return errorData;
+                    }
+
+                    else if(configPath.contains("EMBEDDINGS ERROR"))
+                    {
+                        StringBuilder errorMsg = new StringBuilder("Invalid field given for word embeddings.\r\n");
+                        String[] errorParts;
+                        errorParts = configPath.split(";");
+                        errorMsg.append("Given: ").append(errorParts[1]);
+
+                        String errorData = generateError(errorMsg.toString());
+                        logger.error(errorData);
+                        return errorData;
+                    }
+
+                    else if(configPath.contains("ALGORITHM ERROR"))
+                    {
+                        StringBuilder errorMsg = new StringBuilder("Invalid name given for optimizer algorithm.\r\n");
+                        String[] errorParts;
+                        errorParts = configPath.split(";");
+                        errorMsg.append("Given: ").append(errorParts[1]);
+
+                        String errorData = generateError(errorMsg.toString());
+                        logger.error(errorData);
+                        return errorData;
+                    }
+
+                    else if(configPath.contains("INVALID FEATURE SOURCE ERROR"))
+                    {
+                        StringBuilder errorMsg = new StringBuilder("Invalid source given for feature.\r\n");
+                        String[] errorParts;
+                        errorParts = configPath.split(";");
+                        errorMsg.append("Given: ").append(errorParts[1]);
+                        errorMsg.append("\r\nFeature line number: ").append(errorParts[2]);
+                        errorMsg.append("\r\nFeature number: f").append(errorParts[3]);
+
+                        String errorData = generateError(errorMsg.toString());
+                        logger.error(errorData);
+                        return errorData;
+                    }
+
+                    else if(configPath.contains("INVALID FEATURE RELATION ERROR"))
+                    {
+                        StringBuilder errorMsg = new StringBuilder("Invalid relation given for feature.\r\n");
+                        String[] errorParts;
+                        errorParts = configPath.split(";");
+                        errorMsg.append("Given: ").append(errorParts[1]);
+                        errorMsg.append("\r\nFeature line number: ").append(errorParts[2]);
+                        errorMsg.append("\r\nFeature number: f").append(errorParts[3]);
+
+                        String errorData = generateError(errorMsg.toString());
+                        logger.error(errorData);
+                        return errorData;
+                    }
+
+                    else if(configPath.contains("INVALID FEATURE FIELD ERROR"))
+                    {
+                        StringBuilder errorMsg = new StringBuilder("Invalid field given for feature.\r\n");
+                        String[] errorParts;
+                        errorParts = configPath.split(";");
+                        errorMsg.append("Given: ").append(errorParts[1]);
+                        errorMsg.append("\r\nFeature line number: ").append(errorParts[2]);
+                        errorMsg.append("\r\nFeature number: f").append(errorParts[3]);
+
+                        String errorData = generateError(errorMsg.toString());
+                        logger.error(errorData);
+                        return errorData;
+                    }
+
+                    else
+                    {
+                        StringBuilder errorMsg = new StringBuilder("Unknown error found in configuration parameters.\r\n");
+                        errorMsg.append("String returned: ").append(configPath);
+
+                        String errorData = generateError(errorMsg.toString());
+                        logger.error(errorData);
+                        return errorData;
+                    }
+
+
                 }
                 params.append(configPath);
                 params.append(convertParameters(data, outputDirPath, inputDirPath).replace("\\", "/"));
@@ -203,9 +325,23 @@ public class NLP4J implements ProcessingService
             // Make a Map to hold both the printed, and file outputs.
             Map<String,String> outputPayload = new HashMap<>();
 
-            // Also add the printed text caught from the out stream to the payload
+            String finalPrint;
+
+            if(data.getParameter("saveModel") != null)
+            {
+                StringBuilder toRemove = new StringBuilder("Name not implemented for OnlineComponent. Input name - ");
+                toRemove.append(data.getParameter("saveModel")).append(" will be ignored.");
+                finalPrint = baos.toString().replace(toRemove.toString(), "");
+            }
+
+            else
+            {
+                finalPrint = baos.toString();
+            }
+            // Add the printed text caught from the out stream to the payload
             // with the "Printed" key
-            outputPayload.put("Printed", baos.toString());
+
+            outputPayload.put("Printed", finalPrint);
 
             // Parse the Map to Json, then put it as a payload to a Data object with a LAPPS
             // discriminator and return it as the final output
@@ -294,7 +430,7 @@ public class NLP4J implements ProcessingService
         }
 
         // Return the resulting list of parameters to be processed as an array
-        // and given as input to the NLP4J main method.
+        // and given as input to the NLP4J Train main method.
         return params.toString();
     }
 
@@ -314,12 +450,13 @@ public class NLP4J implements ProcessingService
         // START OF TSV FORMAT
         // Create an array of strings that will hold the field indices, if they are specified
         String[] tsvIndices = null;
+        String indicesString = "";
 
         // Split the indices by commas, and remove whitespaces to have an array representing
         // all indices for the corresponding fields
         if (inputData.getParameter("tsv-indices") != null)
         {
-            String indicesString = (String) inputData.getParameter("tsv-indices");
+            indicesString = (String) inputData.getParameter("tsv-indices");
             tsvIndices = indicesString.split(",[ ]*");
         }
 
@@ -349,7 +486,9 @@ public class NLP4J implements ProcessingService
                     // order to wrap the error appropriately before returning it to the user)
                     catch (IndexOutOfBoundsException e)
                     {
-                        return "INDEX ERROR";
+                        StringBuilder errorMsg = new StringBuilder("INDEX ERROR;");
+                        errorMsg.append(indicesString).append(";").append(fieldsString);
+                        return errorMsg.toString();
                     }
 
                     configTxt.append("        <column index=\"").append(index);
@@ -418,7 +557,9 @@ public class NLP4J implements ProcessingService
             // to be returned to the user
             if(ambiguityTxt == null)
             {
-                return "AMBIGUITY ERROR";
+                StringBuilder errorMsg = new StringBuilder("AMBIGUITY ERROR;");
+                errorMsg.append(givenName);
+                return errorMsg.toString();
             }
 
             else
@@ -464,7 +605,9 @@ public class NLP4J implements ProcessingService
             // to be returned to the user
             if(clustersTxt == null)
             {
-                return "CLUSTERS ERROR";
+                StringBuilder errorMsg = new StringBuilder("CLUSTERS ERROR;");
+                errorMsg.append(givenName);
+                return errorMsg.toString();
             }
 
             else
@@ -510,7 +653,9 @@ public class NLP4J implements ProcessingService
             // to be returned to the user
             if(NETxt == null)
             {
-                return "NAMED ENTITY ERROR";
+                StringBuilder errorMsg = new StringBuilder("NAMED ENTITY ERROR;");
+                errorMsg.append(givenName);
+                return errorMsg.toString();
             }
 
             else
@@ -554,7 +699,9 @@ public class NLP4J implements ProcessingService
             // to be returned to the user
             if(embeddingsTxt == null)
             {
-                return "EMBEDDINGS ERROR";
+                StringBuilder errorMsg = new StringBuilder("EMBEDDINGS ERROR;");
+                errorMsg.append(givenName);
+                return errorMsg.toString();
             }
 
             else
@@ -580,7 +727,9 @@ public class NLP4J implements ProcessingService
                     || givenName.equals("adagrad") || givenName.equals("adagrad-mini-batch")
                     || givenName.equals("adagrad-regression") || givenName.equals("adadelta-mini-batch")))
             {
-                return "ALGORITHM ERROR";
+                StringBuilder errorMsg = new StringBuilder("ALGORITHM ERROR;");
+                errorMsg.append(givenName);
+                return errorMsg.toString();
             }
 
             else
@@ -707,7 +856,9 @@ public class NLP4J implements ProcessingService
                         source = (String) inputData.getParameter(sourceKey);
                         if(!EnumUtils.isValidEnum(Source.class, source))
                         {
-                            return "INVALID FEATURE SOURCE ERROR";
+                            StringBuilder errorMsg = new StringBuilder("INVALID FEATURE SOURCE ERROR;");
+                            errorMsg.append(source).append(";").append(i).append(";").append(f);
+                            return errorMsg.toString();
                         }
 
                         configTxt.append("f").append(f);
@@ -728,7 +879,9 @@ public class NLP4J implements ProcessingService
                             relation = (String) inputData.getParameter(relationKey);
                             if(!EnumUtils.isValidEnum(Relation.class, relation))
                             {
-                                return "INVALID FEATURE RELATION ERROR";
+                                StringBuilder errorMsg = new StringBuilder("INVALID FEATURE RELATION ERROR;");
+                                errorMsg.append(source).append(";").append(i).append(";").append(f);
+                                return errorMsg.toString();
                             }
                             configTxt.append("_").append(relation);
                         }
@@ -736,7 +889,9 @@ public class NLP4J implements ProcessingService
                         field = (String) inputData.getParameter(fieldKey);
                         if(!EnumUtils.isValidEnum(Field.class, field))
                         {
-                            return "INVALID FEATURE FIELD ERROR";
+                            StringBuilder errorMsg = new StringBuilder("INVALID FEATURE FIELD ERROR;");
+                            errorMsg.append(source).append(";").append(i).append(";").append(f);
+                            return errorMsg.toString();
                         }
                         configTxt.append(":").append(field);
 

@@ -10,8 +10,6 @@ import org.lappsgrid.serialization.Data;
 import org.lappsgrid.serialization.Serializer;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,26 +19,26 @@ import static org.lappsgrid.discriminator.Discriminators.Uri;
 /**
  * @author Alexandru Mahmoud
  */
-public class NLP4JTest
+public class NLP4JTrainTest
 {
-    private NLP4J nlp4j;
+    private NLP4JTrain nlp4JTrain;
 
     @Before
     public void setup()
     {
-        nlp4j = new NLP4J();
+        nlp4JTrain = new NLP4JTrain();
     }
 
     @After
     public void cleanup()
     {
-        nlp4j = null;
+        nlp4JTrain = null;
 
     }
     @Test
     public void testMetadata()
     {
-        String jsonMetadata = nlp4j.getMetadata();
+        String jsonMetadata = nlp4JTrain.getMetadata();
         assertNotNull("service.getMetadata() returned null", jsonMetadata);
 
         Data data = Serializer.parse(jsonMetadata, Data.class);
@@ -50,7 +48,7 @@ public class NLP4JTest
         ServiceMetadata metadata = new ServiceMetadata((Map) data.getPayload());
 
         assertEquals("Vendor is not correct", "http://www.lappsgrid.org", metadata.getVendor());
-        assertEquals("Name is not correct", NLP4J.class.getName(), metadata.getName());
+        assertEquals("Name is not correct", NLP4JTrain.class.getName(), metadata.getName());
         assertEquals("Version is not correct.","1.0.0-SNAPSHOT" , metadata.getVersion());
         assertEquals("License is not correct", Discriminators.Uri.APACHE2, metadata.getLicense());
 
@@ -69,10 +67,10 @@ public class NLP4JTest
     @Test
     public void testErrorInput()
     {
-        System.out.println("NLP4JTest.testErrorInput");
+        System.out.println("NLP4JTrainTest.testErrorInput");
         String message = "This is an error message";
         Data<String> data = new Data<>(Uri.ERROR, message);
-        String json = nlp4j.execute(data.asJson());
+        String json = nlp4JTrain.execute(data.asJson());
         assertNotNull("No JSON returned from the service", json);
 
         data = Serializer.parse(json, Data.class);
@@ -84,7 +82,7 @@ public class NLP4JTest
     public void testInvalidDiscriminator()
     {
         Data<String> data = new Data<>(Uri.QUERY, "");
-        String json = nlp4j.execute(data.asJson());
+        String json = nlp4JTrain.execute(data.asJson());
         assertNotNull("No JSON returned from the service", json);
         data = Serializer.parse(json, Data.class);
         assertEquals("Invalid discriminator returned: " + data.getDiscriminator(), Uri.ERROR, data.getDiscriminator());
@@ -94,15 +92,15 @@ public class NLP4JTest
     @Test
     public void testExecuteTrain()
     {
-        System.out.println("nlp4j.testExecuteTrain");
+        System.out.println("nlp4JTrain.testExecuteTrain");
 
         String trainTxt = "";
         String devTxt = "";
 
         try
         {
-            trainTxt = nlp4j.readFile("src/test/resources/test-samples/sample-trn.tsv");
-            devTxt = nlp4j.readFile("src/test/resources/test-samples/sample-dev.tsv");
+            trainTxt = nlp4JTrain.readFile("src/test/resources/test-samples/sample-trn.tsv");
+            devTxt = nlp4JTrain.readFile("src/test/resources/test-samples/sample-dev.tsv");
         }
         catch (IOException e)
         {
@@ -175,7 +173,7 @@ public class NLP4JTest
         data.setParameter("mode", "dep");
         data.setParameter("saveModel", "myModel");
 
-        String response = nlp4j.execute(data.asJson());
+        String response = nlp4JTrain.execute(data.asJson());
         System.out.println(response);
     }
 
