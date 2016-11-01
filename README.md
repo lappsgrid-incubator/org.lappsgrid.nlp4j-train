@@ -9,10 +9,10 @@ Takes a Data<String> object with a [Uri.GET](http://vocab.lappsgrid.org/ns/actio
 
 These are the valid input keys to be used in the payload HashMap.
 
-| Key | Content |
-| --- | --- |
-| train[k] | content of train files in TSV format. Use one key per file, with incrementally numbered keys. Eg: train1, train2, train3, etc... |
-| develop[k] | content of development set files, in TSV format. Use one key per file, with incrementally numbered keys. Eg: develop1, develop2, develop3, etc... |
+| Key | Content | Example |
+| --- | --- | --- |
+| train[k] | content of train files in TSV format. Use one key per file, with incrementally numbered keys | train1, train2, train3, etc... |
+| develop[k] | content of development set files, in TSV format. Use one key per file, with incrementally numbered keys | develop1, develop2, develop3, etc... |
 
 ## General Parameters
 
