@@ -1,5 +1,5 @@
 # org.lappsgrid.nlp4j-train
-The Train command from [EmoryNLP's NLP4J](https://emorynlp.github.io/nlp4j/)
+The Train command from [EmoryNLP's NLP4J](https://emorynlp.github.io/nlp4j/). These instructions are valid for the wrapped web service of NLP4J. Original instructions for the NLP4J Train function can be found [here](https://emorynlp.github.io/nlp4j/quickstart/train.html).
 
 ## Usage
 
@@ -10,6 +10,7 @@ Takes a Data<String> object with a [Uri.GET](http://vocab.lappsgrid.org/ns/actio
 These are the valid input keys to be used in the payload HashMap.
 
 | Key | Content |
+| --- | --- |
 | train[k] | content of train files in TSV format. Use one key per file, with incrementally numbered keys. Eg: train1, train2, train3, etc... |
 | develop[k] | content of development set files, in TSV format. Use one key per file, with incrementally numbered keys. Eg: develop1, develop2, develop3, etc... |
 
@@ -32,7 +33,7 @@ These are the parameters used to create an appropriate configuration file, neede
 These parameters specify the configuration to be used in reading the TSV files.
 
 | Parameter | Description | Example |
-| --- | --- |
+| --- | --- | --- |
 | tsv-fields | (REQUIRED) A list of fields, corresponding to the field in each column of the input TSV file | "form, lemma, pos, feats, dheap, deprel" |
 | tsv-indices | A list of indices, corresponding to the column indices of the fields mentioned in the tsv-fields parameter. This can be used if the given TSV file has columns not corresponding to the fields mentioned above, or if the user wants to ignore some columns. Default = starting at 0 | "1,2,3,4,5,6" (result in ignoring column 0) |
 
@@ -41,6 +42,7 @@ These parameters specify the configuration to be used in reading the TSV files.
 These parameters specify the lexica to use when accomplishing different tasks. They use pre-included lexica files, which can be found [here](src/main/resources/lexica).
 
 | Parameter | Description | Valid Values |
+| --- | --- | --- |
 | ambiguity | Field for ambiguity classes used for part-of-speech tagging | [Ambiguity Values](md/parameters/ambiguity.md) |
 | clusters | Field for word clusters | [Clusters Values](md/parameters/clusters.md) |
 | gazetteers | Field for gazetteers used for named entity recognition | [Gazetteers Values](md/parameters/gazetteers.md) |
@@ -67,7 +69,7 @@ These parameters specify the optimizer used in order to train the statistical mo
 These parameters specify the features used during training. Each index [x] represents a feature line, and each index [y] represents the number of the feature on the line. [x] starts at 1 (the first feature line), while [y] starts at 0 (the feature index used by NLP4J). Although all these parameters are optional overall, some specific fields are minimally required for a valid feature line.
 
 | Parameter Key | Description | Valid Values | Starting Key |
-| --- | --- | --- |
+| --- | --- | --- | --- |
 | [x]-f[y]-source | (Required) Source from which to start | [Source Values](md/parameters/f-source.md) | 1-f0-source |
 | [x]-f[y]-window | The context window with respect to the source | ±Value | 1-f0-window |
 | [x]-f[y]-relation | The relation to the source | [Relation Values](md/parameters/f-relation.md) | 1-f0-relation |
