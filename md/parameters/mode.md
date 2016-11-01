@@ -3,6 +3,7 @@
 These are the valid modes accepted by the train function of NLP4J, and their description.
 
 | Mode | Description |
+| --- | --- |
 | custom | Custom NLP |
 | pos | Part-of-Speech tagging |
 | ner | Named Entity Recognition |

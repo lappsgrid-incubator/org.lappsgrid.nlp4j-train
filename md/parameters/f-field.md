@@ -15,19 +15,25 @@ These are the accepted values for the feature field parameter for different uses
 | | orthographic_lowercase |
 | | prefix |
 | | suffix |
+| | |
 | Part-of-Speech Tagging | lemma |
 | | feats |
 | | part_of_speech_tag |
 | | ambiguity_classes |
+| | |
 | Named Entity Recognition | named_entity_tag |
+| | |
 | Dependency Parsing | dependency_label |
 | | dependent_set |
 | | distance |
 | | valency |
+| | |
 | Lexica | word_clusters |
 | | word_embedding |
 | | named_entity_gazetteers |
+| | |
 | Boolean | positional |
+| | |
 | Document | bag_of_words |
 | | bag_of_words_norm |
 | | bag_of_words_count |

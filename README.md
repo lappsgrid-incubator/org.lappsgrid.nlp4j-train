@@ -11,8 +11,8 @@ These are the valid input keys to be used in the payload HashMap.
 
 | Key | Content | Example |
 | --- | --- | --- |
-| train[k] | content of train files in TSV format. Use one key per file, with incrementally numbered keys | train1, train2, train3, etc... |
-| develop[k] | content of development set files, in TSV format. Use one key per file, with incrementally numbered keys | develop1, develop2, develop3, etc... |
+| train[k] | Content of train files in TSV format. Use one key per file, with incrementally numbered keys | train1, train2, train3, etc... |
+| develop[k] | Content of development set files in TSV format. Use one key per file, with incrementally numbered keys | develop1, develop2, develop3, etc... |
 
 ## General Parameters
 
@@ -73,5 +73,5 @@ These parameters specify the features used during training. Each index [x] repre
 | [x]-f[y]-source | (Required) Source from which to start | [Source Values](md/parameters/f-source.md) | 1-f0-source |
 | [x]-f[y]-window | The context window with respect to the source | ±Value | 1-f0-window |
 | [x]-f[y]-relation | The relation to the source | [Relation Values](md/parameters/f-relation.md) | 1-f0-relation |
-| [x]-f[y]-field | (Required) Field type | [Field Values](md/paraemters/f-field.md) | 1-f0-field |
+| [x]-f[y]-field | (Required) Field type | [Field Values](md/parameters/f-field.md) | 1-f0-field |
 | [x]-f[y]-value | The extra value of the field | Value | 1-f0-value |
