@@ -4,6 +4,7 @@ import edu.emory.mathcs.nlp.bin.NLPTrain;
 import edu.emory.mathcs.nlp.component.template.feature.Field;
 import edu.emory.mathcs.nlp.component.template.feature.Relation;
 import edu.emory.mathcs.nlp.component.template.feature.Source;
+import edu.emory.mathcs.nlp.component.template.util.NLPMode;
 import org.apache.commons.lang3.EnumUtils;
 import org.lappsgrid.api.ProcessingService;
 import org.lappsgrid.discriminator.Discriminators;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.PatternSyntaxException;
@@ -147,8 +149,6 @@ public class NLP4JTrain implements ProcessingService
                 throw new RuntimeException("A problem occurred in the handling of the temporary files.", e);
             }
 
-            // Call the method that converts the parameters to the format that they would
-            // be in when given from command-line.
             StringBuilder params = new StringBuilder("-c ");
 
             try
@@ -280,11 +280,30 @@ public class NLP4JTrain implements ProcessingService
                         logger.error(errorData);
                         return errorData;
                     }
-
-
                 }
+
+                // Call the method that converts the parameters to the format that they would
+                // be in when given from command-line.
                 params.append(configPath);
-                params.append(convertParameters(data, outputDirPath, inputDirPath).replace("\\", "/"));
+
+                String convertedParams = convertParameters(data, outputDirPath, inputDirPath).replace("\\", "/");
+
+                if(convertedParams.contains("ERROR"))
+                {
+                    if(convertedParams.contains("MODE ERROR"))
+                    {
+                        StringBuilder errorMsg = new StringBuilder("Invalid mode parameter given.\r\n");
+                        String[] errorParts;
+                        errorParts = configPath.split(";");
+                        errorMsg.append("Given: ").append(errorParts[1]);
+
+                        String errorData = generateError(errorMsg.toString());
+                        logger.error(errorData);
+                        return errorData;
+                    }
+                }
+
+                params.append(convertedParams);
             }
             // Since we are only handling files created by the function, there should never be
             // a problem with these files, thus the exception will get promoted to a RuntimeException.
@@ -400,6 +419,8 @@ public class NLP4JTrain implements ProcessingService
                 String fileContent = payload.get(key);
                 writeTempFile(key, inputDirPath, fileContent, ".dev");
             }
+
+            // TODO: Add prev for previously trained models: -p
         }
 
         // Add the train directory parameter with the input directory path as an argument,
@@ -415,6 +436,14 @@ public class NLP4JTrain implements ProcessingService
 
         if(data.getParameter("mode") != null)
         {
+            String givenMode = (String) data.getParameter("mode");
+
+            if(!EnumUtils.isValidEnum(NLPMode.class, givenMode))
+            {
+                StringBuilder errorMsg = new StringBuilder("MODE ERROR;");
+                errorMsg.append(givenMode);
+                return errorMsg.toString();
+            }
             params.append(" -mode ").append(data.getParameter("mode"));
         }
 
@@ -573,7 +602,7 @@ public class NLP4JTrain implements ProcessingService
         {
             // Three arrays holding the names, which users can choose from, and their
             // corresponding filenames and field names
-            String[] clustersNames = {"brown-simplified","brown-twit"};
+            String[] clustersNames = {"brown-simplified-lc","brown-twit-lc"};
             String[] clustersFiles = {"en-brown-clusters-simplified-lowercase.xz", "en-brown-clusters-twit-lowercase.xz"};
             String[] clustersFields = {"word_form_simplified_lowercase","word_form_lowercase"};
 
@@ -617,11 +646,11 @@ public class NLP4JTrain implements ProcessingService
         }
 
 
-        if(inputData.getParameter("NE") != null)
+        if(inputData.getParameter("gazetteers") != null)
         {
             // Three arrays holding the names, which users can choose from, and their
             // corresponding filenames and field names
-            String[] namedEntityNames = {"gazetteers-simplified","gazetteers-lowercase"};
+            String[] namedEntityNames = {"simplified","simplified-lowercase"};
             String[] namedEntityFiles = {"en-named-entity-gazetteers-simplified.xz", "en-named-entity-gazetteers-simplified-lowercase.xz"};
             String[] namedEntityFields = {"word_form_simplified","word_form_simplified_lowercase"};
 
@@ -631,7 +660,7 @@ public class NLP4JTrain implements ProcessingService
                 configTxt.append("    <lexica>\r\n");
             }
 
-            String givenName = (String) inputData.getParameter("NE");
+            String givenName = (String) inputData.getParameter("gazetteers");
             StringBuilder NETxt = null;
             int index = 0;
 
@@ -668,7 +697,7 @@ public class NLP4JTrain implements ProcessingService
         {
             // Three arrays holding the names, which users can choose from, and their
             // corresponding filenames and field names
-            String[] embeddingsNames = {"word-embeddings-undigitalized"};
+            String[] embeddingsNames = {"undigitalized"};
             String[] embeddingsFiles = {"en-word-embeddings-undigitalized.xz"};
             String[] embeddingsFields = {"word_form_undigitalized"};
 
@@ -723,6 +752,16 @@ public class NLP4JTrain implements ProcessingService
         {
             String givenName = (String) inputData.getParameter("algorithm");
 
+            //ArrayList<String> algorithmNames = new ArrayList<>();
+            //algorithmNames.add("perceptron");
+            //algorithmNames.add("softmax-regression");
+            //algorithmNames.add("adagrad");
+            //algorithmNames.add("adagrad-mini-batch");
+            //algorithmNames.add("adagrad-regression");
+            //algorithmNames.add("adadelta-mini-batch");
+
+            //if(algorithmNames.contains(givenName))
+
             if(!(givenName.equals("perceptron") || givenName.equals("softmax-regression")
                     || givenName.equals("adagrad") || givenName.equals("adagrad-mini-batch")
                     || givenName.equals("adagrad-regression") || givenName.equals("adadelta-mini-batch")))
@@ -742,9 +781,9 @@ public class NLP4JTrain implements ProcessingService
                     configTxt.append("        <l1_regularization>").append(givenNumber).append("</l1_regularization>\r\n");
                 }
 
-                if(inputData.getParameter("cutoff") != null)
+                if(inputData.getParameter("rate") != null)
                 {
-                    String givenNumber = (String) inputData.getParameter("cutoff");
+                    String givenNumber = (String) inputData.getParameter("rate");
                     configTxt.append("        <learning_rate>").append(givenNumber).append("</learning_rate>\r\n");
                 }
 
@@ -798,7 +837,7 @@ public class NLP4JTrain implements ProcessingService
                     configTxt.append("        <bias>").append(givenNumber).append("</bias>\r\n");
                 }
 
-                configTxt.append("    </optimizer>\r\n");
+                configTxt.append("    </optimizer>\r\n\r\n");
             }
         }
         // END OF OPTIMIZER

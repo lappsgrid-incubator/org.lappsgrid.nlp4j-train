@@ -1,0 +1,35 @@
+<configuration>
+    <tsv>
+        <column index="1" field="form"/>
+        <column index="2" field="lemma"/>
+        <column index="3" field="pos"/>
+        <column index="4" field="feats"/>
+        <column index="5" field="dhead"/>
+        <column index="6" field="deprel"/>
+    </tsv>
+
+    <optimizer>
+        <algorithm>adagrad-mini-batch</algorithm>
+        <l1_regularization>0.00001</l1_regularization>
+        <learning_rate>0</learning_rate>
+        <feature_cutoff>0</feature_cutoff>
+        <lols fixed="0" decaying="0.95"/>
+        <max_epoch>3</max_epoch>
+        <batch_size>1</batch_size>
+        <bias>0</bias>
+    </optimizer>
+    
+    <feature_template>
+        <feature f0="i:lemma"/>
+        <feature f0="j:lemma"/>
+        <feature f0="i:part_of_speech_tag"/>
+        <feature f0="j:part_of_speech_tag"/>
+        <feature f0="i:part_of_speech_tag" f1="i:lemma"/>
+        <feature f0="j:part_of_speech_tag" f1="j:lemma"/>
+        <feature f0="i:part_of_speech_tag" f1="j:part_of_speech_tag"/>
+        <feature f0="i:part_of_speech_tag" f1="j:lemma"/>
+        <feature f0="i:lemma" f1="j:part_of_speech_tag"/>
+        <feature f0="i:lemma" f1="j:lemma"/>
+    </feature_template>
+
+</configuration>
