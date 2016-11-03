@@ -1,0 +1,4 @@
+2016-11-02 20:31:15,057 ERROR [NLP4JTrain.execute:115] {
+  "discriminator" : "http://vocab.lappsgrid.org/ns/error",
+  "payload" : "Invalid discriminator.\nExpected http://vocab.lappsgrid.org/ns/action/get\nFound http://vocab.lappsgrid.org/ns/action/query"
+}

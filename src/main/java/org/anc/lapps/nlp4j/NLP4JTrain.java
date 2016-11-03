@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.PatternSyntaxException;
@@ -42,12 +41,13 @@ public class NLP4JTrain implements ProcessingService
     {
         ServiceMetadata metadata = new ServiceMetadata();
         metadata.setName(this.getClass().getName());
-        metadata.setDescription("The NLP4J project provides a NLP toolkit for JVM languages.");
+        metadata.setDescription("The Train function from EmoryNLP's NLP4J project.");
         metadata.setVersion(Version.getVersion());
         metadata.setVendor("http://www.lappsgrid.org");
         metadata.setLicense(Discriminators.Uri.APACHE2);
 
         IOSpecification requires = new IOSpecification();
+        // Todo: check for appropriate input format
         requires.addFormat(Discriminators.Uri.GET);
         requires.setEncoding("UTF-8");
 
@@ -1055,24 +1055,4 @@ public class NLP4JTrain implements ProcessingService
 
 }
 
-//INCOMPLETE
-/** This method will read a XZ file from a path, and output its contents as a String.
- *
- * @param path The path to the text file that should be read
- * @return A String representing the contents of the text file.
- */
- /*
-    public String readXZFile(String path) throws IOException {
-        FileInputStream infile = new FileInputStream(path);
-        BufferedInputStream buffin = new BufferedInputStream(infile);
-        XZInputStream inxz = new XZInputStream(buffin);
-        int n = 0;
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        byte[] buffer = new byte[8192];
-        while (-1 != (n = inxz.read(buffer))) {
-            baos.write(buffer, 0, n);
-        }
-        return baos.toString();
-    }
-*/
 

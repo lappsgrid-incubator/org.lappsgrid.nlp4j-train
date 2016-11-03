@@ -51,7 +51,7 @@
                     <execution>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <package>org.anc.lapps.nlp4j-train</package>
+                            <package>org.anc.lapps.nlp4j</package>
                         </configuration>
                         <goals>
                             <goal>version</goal>

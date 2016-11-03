@@ -54,8 +54,7 @@ public class NLP4JTrainTest
 
         IOSpecification produces = metadata.getProduces();
         assertEquals("Produces encoding is not correct", "UTF-8", produces.getEncoding());
-        assertEquals("Too many annotation types produced", 1, produces.getAnnotations().size());
-        assertEquals("Tokens not produced", Discriminators.Uri.TOKEN, produces.getAnnotations().get(0));
+        assertEquals("Too many annotation types produced", 0, produces.getAnnotations().size());
         assertEquals("Too many output formats", 1, produces.getFormat().size());
         assertEquals("LIF not produced", Discriminators.Uri.LAPPS, produces.getFormat().get(0));
 
@@ -81,6 +80,7 @@ public class NLP4JTrainTest
     @Test
     public void testInvalidDiscriminator()
     {
+        System.out.println("NLP4JTrainTest.testInvalidDiscriminator");
         Data<String> data = new Data<>(Uri.QUERY, "");
         String json = nlp4JTrain.execute(data.asJson());
         assertNotNull("No JSON returned from the service", json);
