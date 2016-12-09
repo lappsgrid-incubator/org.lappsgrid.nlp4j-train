@@ -141,12 +141,12 @@ public class NLP4JTrain implements ProcessingService
                 inputDirPath.toFile().deleteOnExit();
             }
             // Since we are only handling files created by the function, there should never be
-            // a problem with these files, thus the exception will get promoted to a RuntimeException.
+            // a problem with these files. If there is, notify the user of the error.
             catch (IOException e)
             {
-                String errorData = generateError("Error in handling of temporary files.");
+                String errorData = generateError("Error in creating temporary input/output directories.");
                 logger.error(errorData);
-                throw new RuntimeException("A problem occurred in the handling of the temporary files.", e);
+                return errorData;
             }
 
             StringBuilder params = new StringBuilder("-c ");
@@ -306,12 +306,12 @@ public class NLP4JTrain implements ProcessingService
                 params.append(convertedParams);
             }
             // Since we are only handling files created by the function, there should never be
-            // a problem with these files, thus the exception will get promoted to a RuntimeException.
+            // a problem with these files. If there is notify
             catch (IOException e)
             {
                 String errorData = generateError("Error in handling of temporary files.");
                 logger.error(errorData);
-                throw new RuntimeException("A problem occurred in the handling of the temporary files.", e);
+                return errorData;
             }
             String[] paramsArray;
 
@@ -381,7 +381,7 @@ public class NLP4JTrain implements ProcessingService
      * @param inputDirPath A Path to the input directory
      * @return A String representing the parameters of the Data object.
      */
-    private String convertParameters(Data<String> data, Path outputDirPath, Path inputDirPath) throws IOException
+    protected String convertParameters(Data<String> data, Path outputDirPath, Path inputDirPath) throws IOException
     {
         StringBuilder params = new StringBuilder();
 
@@ -470,7 +470,7 @@ public class NLP4JTrain implements ProcessingService
      * @param inputData The input data from which to extract configuration details
      * @return A String representing the path to the created configuration file.
      */
-    public String makeConfigFile(Path dir, Data<String> inputData) throws IOException
+    protected String makeConfigFile(Path dir, Data<String> inputData) throws IOException
     {
         // This will hold the text for the configuration file, which is in XML format.
         StringBuilder configTxt = new StringBuilder("<configuration>\r\n");
@@ -1006,7 +1006,7 @@ public class NLP4JTrain implements ProcessingService
      * @param message A string representing the error message
      * @return A JSON string containing a Data object with the message as a payload.
      */
-    private String generateError(String message)
+    protected String generateError(String message)
     {
         Data<String> data = new Data<>();
         data.setDiscriminator(Discriminators.Uri.ERROR);
@@ -1020,7 +1020,7 @@ public class NLP4JTrain implements ProcessingService
      * @param path The path to the text file that should be read
      * @return A String representing the contents of the text file.
      */
-    public String readFile(String path) throws IOException
+    protected String readFile(String path) throws IOException
     {
         StringBuilder output = new StringBuilder();
         BufferedReader br = new BufferedReader(new FileReader(path));
@@ -1042,7 +1042,7 @@ public class NLP4JTrain implements ProcessingService
      * @param extension The extension to be given to the temporary file
      * @return A path to the temporary text file that was created
      */
-    public Path writeTempFile(String fileName, Path dirPath, String fileTxt, String extension) throws IOException
+    protected Path writeTempFile(String fileName, Path dirPath, String fileTxt, String extension) throws IOException
     {
         Path filePath = Files.createTempFile(dirPath, fileName, extension);
         File file = filePath.toFile();
